@@ -1,13 +1,13 @@
-use std::io;
+use serde_json::Value;
+use std::fs::File;
+use std::io::BufRead;
+use std::io::BufReader;
 
 fn main() {
-    println!("Guess the number !");
-    println!("Please input your guess.");
-
-    let mut guess = String::new();
-
-    io::stdin()
-        .read_line(&mut guess)
-        .expect("Failed to read line.");
-    println!("You guessed {}", guess);
+    let file = File::open("./data/data.json").expect("couldn't open file");
+    for line in BufReader::new(file).lines() {
+        let line = line.expect("couldn't get line");
+        let v: Value = serde_json::from_str(&line).expect("couldn't deserialize");
+        println!("Loaded value: {:?}", v["data"]);
+    }
 }
